@@ -377,6 +377,7 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
 
         // Create the 2D parts of our 3D vertices, others are default 0.0f
 //		gameLog.d("ssu = " + ssu);
+
         vertices[0] = offset_x;
         vertices[1] = offset_y + (BG_TEXTURE_HEIGHT * ssy);
         vertices[2] = 0f;

@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
  */
 
 public class gameLog {
-    private static final boolean LOG = true;
+    private static final boolean LOG = false;
     private static SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.getDefault());
     private static String PREFIX = ">>";
     private static String LOCATOR = ":at ";
