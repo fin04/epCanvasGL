@@ -14,30 +14,38 @@ public class ApplicationClass  extends Application {
     public TouchData.Axis axis;
     public MotionEvent mEvent;
 
-    public static final int GAMECANVAS_WIDTH = 512;
-    public static final int GAMECANVAS_HEIGHT = 910;
+    private final int BG_TEXTURE_WIDTH = 1024;
+    private final int BG_TEXTURE_HEIGHT = 1024;
 
-//    public static final int GAMECANVAS_WIDTH = 720;
-//    public static final int GAMECANVAS_HEIGHT = 1280;
+    public final int TextureClipW = 240;
+    public final int TextureClipH = 256;
+    public final int totalVertics = 4;
+
+    private final int GAMECANVAS_WIDTH = 720;
+    private final int GAMECANVAS_HEIGHT = 1280;
+
+    public float mGameScaleValueWidth;
+    public float mGameScaleValueHeight;
+    public float mGameScaleValue;
 
     public int mGameOrientation = 0;
     public static final int GAMECANVAS_ORIENTATION_PORTRAIT = 0;
     public static final int GAMECANVAS_ORIENTATION_LANDSCAPE = 1;
 
+    private int mTextureWidth;
+    private int mTextureHeight;
 
-    private int mScreenWidth;
-    private int mScreenHeight;
+    private int mTextureClipWidth;
+    private int mTextureClipHeight;
 
-    public float mGameScreenWidthVal;
-    public float mGameScreenHeightVal;
+    private int mDeviceScreenWidth;
+    private int mDeviceScreenHeight;
 
-    public float mGameScreenVal;
-    public int mScreenOverWidth;
-    public int mScreenOverHeight;
-    public int mGameCanvasWidth;
-    public int mGameCanvasHeight;
+    private int mGameCanvasWidth;
+    private int mGameCanvasHeight;
 
-    public int gameFlag;
+    public int gameMode;
+    public int gameState;
     public boolean isSceneInit;
     public boolean isGameInit;
     public Bitmap loadingBg;
@@ -60,40 +68,48 @@ public class ApplicationClass  extends Application {
         super.onConfigurationChanged(newConfig);
     }
 
-    public void setGamecanvasOrientation(int orientation){
+    public void setGameCanvasOrientation(int orientation){
         this.mGameOrientation = orientation;
-        if(mGameOrientation == GAMECANVAS_ORIENTATION_PORTRAIT){
-            setGameCanvasWidth(GAMECANVAS_WIDTH);
-            setGameCanvasHeight(GAMECANVAS_HEIGHT);
+        if(orientation == GAMECANVAS_ORIENTATION_PORTRAIT){
+            this.mGameCanvasWidth = GAMECANVAS_WIDTH;
+            this.mGameCanvasHeight = GAMECANVAS_HEIGHT;
+            this.mTextureWidth = BG_TEXTURE_WIDTH;
+            this.mTextureHeight = BG_TEXTURE_HEIGHT;
+            this.mTextureClipWidth = TextureClipW;
+            this.mTextureClipHeight = TextureClipH;
         }else
-        if(mGameOrientation == GAMECANVAS_ORIENTATION_LANDSCAPE){
-            setGameCanvasWidth(GAMECANVAS_HEIGHT);
-            setGameCanvasHeight(GAMECANVAS_WIDTH);
+        if(orientation == GAMECANVAS_ORIENTATION_LANDSCAPE){
+            this.mGameCanvasWidth = GAMECANVAS_HEIGHT;
+            this.mGameCanvasHeight = GAMECANVAS_WIDTH;
+            this.mTextureWidth = BG_TEXTURE_HEIGHT;
+            this.mTextureHeight = BG_TEXTURE_WIDTH;
+            this.mTextureClipWidth = TextureClipH;
+            this.mTextureClipHeight = TextureClipW;
         }
     }
 
-    public void setScreenWidth(int lcdW){
-        this.mScreenWidth = lcdW;
+    public void setDeviceScreenWidth(int lcdW){
+        this.mDeviceScreenWidth = lcdW;
     }
 
-    public int getScreenWidth(){
-        return mScreenWidth;
+    public void setDeviceScreenHeight(int lcdH){
+        this.mDeviceScreenHeight = lcdH;
     }
 
-    public void setScreenHeight(int lcdH){
-        this.mScreenHeight = lcdH;
+    public int getDeviceScreenWidth(){
+        return mDeviceScreenWidth;
     }
 
-    public int getScreenHeight(){
-        return mScreenHeight;
+    public int getDeviceScreenHeight(){
+        return mDeviceScreenHeight;
     }
 
-    public void setGameCanvasWidth(int canvasW){
-        this.mGameCanvasWidth = canvasW;
+    public void setGameCanvasWidth(int width) {
+        this.mGameCanvasWidth = width;
     }
 
-    public void setGameCanvasHeight(int canvasH){
-        this.mGameCanvasHeight = canvasH;
+    public void setGameCanvasHeight(int height) {
+        this.mGameCanvasHeight = height;
     }
 
     public int getGameCanvasWidth(){
@@ -102,5 +118,21 @@ public class ApplicationClass  extends Application {
 
     public int getGameCanvasHeight(){
         return mGameCanvasHeight;
+    }
+
+    public int getTextureWidth() {
+        return mTextureWidth;
+    }
+
+    public int getTextureHeight() {
+        return mTextureHeight;
+    }
+
+    public int getTextureClipWidth(){
+        return mTextureClipWidth;
+    }
+
+    public int getTextureClipHeight() {
+        return mTextureClipHeight;
     }
 }

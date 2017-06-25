@@ -18,15 +18,16 @@ public interface TouchData {
 
     public static class Touch{
         public MotionEvent event;
-        public float downX;
-        public float downY;
-        public float motionX;
-        public float motionY;
-        public float axisX;
-        public float axisY;
-        public float oriX;
-        public float oriY;
-        public int Action;
+//        public float downX;
+//        public float downY;
+        public float mPosX;
+        public float mPosY;
+//        public float mTouchX;
+//        public float mTouchY;
+        public float mLastTouchX;
+        public float mLastTouchY;
+        public int action;
+        public int mActivePointerId = MotionEvent.INVALID_POINTER_ID;
     }
 
     public static class Axis{

@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * Created by darka on 2016-11-21.
@@ -33,22 +34,20 @@ public class TextUtil {
             System.out.format("array[%d] = %s%n", i, array[i]);
     }
 
-    public static String setMultiLineText(String text, int textSize, int width) {
+    public static ArrayList<String> setMultiLineText(String text, int textSize, int width) {
+        ArrayList<String> strList = new ArrayList<>();
         Paint paint = new Paint();
         paint.setTextSize(textSize);
         String str = "";
-        String result = "";
         width -= textSize;
         for (int i = 0; i < text.length(); i++) {
             str += text.charAt(i);
             if (paint.measureText(str) >= width) {
-                gameLog.d(str + "," + paint.measureText(str));
-                result += str + "\r\n";
+                strList.add(str);
                 str = "";
             }
         }
-        result += str;
-        return result;
-
+        strList.add(str);
+        return strList;
     }
 }

@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.opengl.ETC1Util;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class GLUtil {
 	
@@ -45,12 +48,15 @@ public class GLUtil {
 	
 	static public int loadTexture(Bitmap bitmap, int[] texturenames, int num){
 	    if (texturenames[num] != 0){
-//	        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+	        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + num);
 	        // Bind to the texture in OpenGL
 	        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texturenames[num]);
 	        // Set filtering
-	        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-	        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR );
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR );
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE );
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE );
+
 	        // Load the bitmap into the bound texture.
 	        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 	        

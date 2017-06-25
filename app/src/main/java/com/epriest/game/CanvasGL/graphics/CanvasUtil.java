@@ -31,12 +31,14 @@ public class CanvasUtil {
 		mCanvas.drawText(text, picX, picY, paint);
 	}*/
 
-    static public void drawString(Canvas mCanvas, String text, int size, Paint paint, int color, Align align,
+    static public void drawString(Canvas mCanvas, String text, int size, int color, Align align,
                                   int picX, int picY) {
+        Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
         paint.setTextSize(size);
         paint.setTextAlign(align);
+        paint.setAntiAlias(true);
         mCanvas.drawText(text, picX, picY + size, paint);
     }
 
@@ -48,7 +50,8 @@ public class CanvasUtil {
         }
     }
 
-    static public void drawBox(Canvas mCanvas, Paint paint, int color, boolean isFill, int left, int top, int boxW, int boxH) {
+    static public void drawBox(Canvas mCanvas, int color, boolean isFill, int left, int top, int boxW, int boxH) {
+        Paint paint = new Paint();
         paint.setColor(color);
         if (isFill)
             paint.setStyle(Paint.Style.FILL);
@@ -58,23 +61,28 @@ public class CanvasUtil {
 
     }
 
-    static public void drawBitmap(Bitmap bitmap, Canvas mCanvas, Paint mPaint,
-                                  int picX, int picY) {
-        mCanvas.drawBitmap(bitmap, picX, picY, mPaint);
+    static public void drawBitmap(Bitmap bitmap, Canvas mCanvas, int picX, int picY) {
+        mCanvas.drawBitmap(bitmap, picX, picY, null);
     }
 
-    static public void drawClip(Bitmap bitmap, Canvas mCanvas, Paint mPaint,
+    static public void drawBgBitmap(Bitmap bitmap, Canvas mCanvas) {
+        mCanvas.drawBitmap(bitmap, (mCanvas.getWidth()-bitmap.getWidth())/2, (mCanvas.getHeight()-bitmap.getHeight())/2, null);
+    }
+
+    static public void drawClip(Bitmap bitmap, Canvas mCanvas,
                                 int clipX, int clipY, int clipW, int clipH, int drawX, int drawY) {
+//        Paint mPaint = new Paint();
+//        mPaint.setAntiAlias(true);
         Rect src = new Rect(clipX, clipY, clipX + clipW, clipY + clipH);
         Rect dst = new Rect(drawX, drawY, drawX + clipW, drawY + clipH);
-        mCanvas.drawBitmap(bitmap, src, dst, mPaint);
+        mCanvas.drawBitmap(bitmap, src, dst, null);
     }
 
-    static public void drawClipResize(Bitmap bitmap, Canvas mCanvas, Paint mPaint,
-                                      int clipX, int clipY, int clipW, int clipH, int picX, int picY, int picW, int picH) {
+    static public void drawClipResize(Bitmap bitmap, Canvas mCanvas, int clipX, int clipY, int clipW, int clipH,
+                                      int picX, int picY, int picW, int picH) {
         Rect src = new Rect(clipX, clipY, clipX + clipW, clipY + clipH);
         Rect dst = new Rect(picX, picY, picX + picW, picY + picH);
-        mCanvas.drawBitmap(bitmap, src, dst, mPaint);
+        mCanvas.drawBitmap(bitmap, src, dst, null);
     }
 
     static public Bitmap rotateBitmap(Bitmap bitmap, int angle) {

@@ -1,5 +1,9 @@
 package com.epriest.game.CanvasGL.util;
 
+import android.content.Context;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 /**
@@ -26,22 +30,27 @@ public class GameUtil {
 
     public static boolean equalsTouch(TouchData.Touch touch,
                                       float targetX, float targetY, float targetW, float targetH){
-// 		float tX =  (_touch.downX*appClass.axis.lcdValW)/100;
-// 		float tY =  (_touch.downY*appClass.axis.lcdValH)/100;
 
-// 		targetX = (targetX*appClass.axis.lcdValW)/100;
-// 		targetY = (targetY*appClass.axis.lcdValH)/100;
-// 		targetW = (targetW*appClass.axis.lcdValW)/100;
-// 		targetH = (targetH*appClass.axis.lcdValH)/100;
-
-// 		logline.msg("-=0-="+targetX+","+targetY+","+targetW+","+targetH);
-// 		logline.msg("-=1-="+_touch.downX+","+_touch.downY+","+targetW+","+targetH);
-
-        if(touch.axisX < targetX || touch.axisY < targetY ||
-                touch.axisX > targetX+targetW || touch.axisY > targetY+targetH){
+        if(touch.mLastTouchX < targetX || touch.mLastTouchY < targetY ||
+                touch.mLastTouchX > targetX+targetW || touch.mLastTouchY > targetY+targetH){
             return false;
         }
         return true;
+    }
+
+    public static String getAssetString(Context con, String fileName){
+        String json = null;
+        try {
+            InputStream inputStream = con.getAssets().open(fileName);
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            inputStream.read(buffer);
+            inputStream.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
 }
