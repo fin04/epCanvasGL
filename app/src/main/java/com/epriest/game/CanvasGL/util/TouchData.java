@@ -18,8 +18,8 @@ public interface TouchData {
 
     public static class Touch{
         public MotionEvent event;
-//        public float downX;
-//        public float downY;
+        public float mDownX;
+        public float mDownY;
         public float mPosX;
         public float mPosY;
 //        public float mTouchX;

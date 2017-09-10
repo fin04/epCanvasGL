@@ -2,8 +2,6 @@ package com.epriest.game.CanvasGL.graphics;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
@@ -22,7 +20,7 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public abstract class GLView extends GLSurfaceView implements Renderer {
+public abstract class GLView_0 extends GLSurfaceView implements Renderer {
 
     public ApplicationClass appClass;
 
@@ -53,7 +51,7 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
     public static long framelate = 0;
     private int gameFps = 45;
 
-    public GLView(Context context) {
+    public GLView_0(Context context) {
         super(context);
         appClass = (ApplicationClass) context.getApplicationContext();
         // appClass.game.Start();
@@ -78,11 +76,11 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         long timeNow = System.currentTimeMillis();
 
         // We should make sure we are valid and sane
-//        if (tempMotionEvent != null) {
-//            cOnTouchEvent(tempMotionEvent);
-//        }
+        if (tempMotionEvent != null) {
+            cOnTouchEvent(tempMotionEvent);
+        }
         cUpdateLogic();
-//        tempMotionEvent = null;
+        tempMotionEvent = null;
         int[] textures = getImage();
         Render(mtrxProjectionAndView);
         // UpdateSprite();
@@ -92,7 +90,7 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         long mElapsedTime = timeNow - prevFrameTime;
         totalElapsedTime += mElapsedTime;
         if (totalElapsedTime > 1000) {
-            GLView.framelate = frameCount;
+            GLView_0.framelate = frameCount;
             frameCount = 0;
             totalElapsedTime = 0;
         }
@@ -112,47 +110,27 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
 
     private void Render(float[] m) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        // get handle to vertex shader's vPosition member
         int mPositionHandle = GLES20.glGetAttribLocation(riGraphicTools.sp_Image, "vPosition");
-        // Enable a handle to the triangle vertices
         GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        // Prepare the background coordinate data
         GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
         int mTexCoordLoc = GLES20.glGetAttribLocation(riGraphicTools.sp_Image, "a_texCoord");
         GLES20.glEnableVertexAttribArray(mTexCoordLoc);
-
-        // Prepare the texturecoordinates
         GLES20.glVertexAttribPointer(mTexCoordLoc, 2, GLES20.GL_FLOAT, false, 0, uvBuffer);
-
-        // get handle to shape's transformation matrix
         int mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_Image, "uMVPMatrix");
-
-        // Apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
         int mSamplerLoc = GLES20.glGetUniformLocation(riGraphicTools.sp_Image, "s_texture");
         GLES20.glUniform1i(mSamplerLoc, 0);
 
-        // Set the sampler texture unit to our selected id
-
-        // Draw the triangle
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indices.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
-
-        // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
         GLES20.glDisableVertexAttribArray(mTexCoordLoc);
     }
 
-    Bitmap mTextureBitmap;
-    Canvas mCanvas;
-
     private void init() {
         SetupScaling();
         SetupTriangle();
-//        setVertices();
-        SetupImage();
-        mTextureBitmap = Bitmap.createBitmap(appClass.getTextureWidth(), appClass.getTextureHeight(), Bitmap.Config.RGB_565);
-        mCanvas = new Canvas(mTextureBitmap);
+        setVertices();
+        // SetupImage();
     }
 
     // 그리기 표면이 생성될 때나 ESL 컨텍스트가 제거될때 호출.
@@ -160,7 +138,7 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         init();
-        gl.glClearColor(0.0f, 0.5f, 0.5f, 0.0f);
+        gl.glClearColor(0.0f, 0.5f, 0.0f, 0.0f);
         // Create the shaders
         int vertexShader = riGraphicTools.loadShader(GLES20.GL_VERTEX_SHADER, riGraphicTools.vs_SolidColor);
         int fragmentShader = riGraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER, riGraphicTools.fs_SolidColor);
@@ -225,7 +203,7 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         }
     }
 
-    /*private void setVertices() {
+    private void setVertices() {
         // Create our UV coordinates.
         uvs = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f};
 
@@ -235,209 +213,74 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         uvBuffer = bb.asFloatBuffer();
         uvBuffer.put(uvs);
         uvBuffer.position(0);
-    }*/
-
-    Bitmap mBitmap;
+    }
 
     private int[] getImage() {
 //		// 비트맵 텍스쳐 생성
-        mBitmap = cOnDraw();
-
-        CanvasUtil.drawClip(mBitmap, mCanvas, 0, 0, appClass.getTextureWidth(), appClass.getGameCanvasHeight(), 0, 0);
-
-        if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_PORTRAIT) {
-            int clipH = appClass.getGameCanvasHeight() - appClass.getTextureHeight();
-            CanvasUtil.drawClip(mBitmap, mCanvas, 0, appClass.getTextureHeight(),
-                    appClass.getTextureClipWidth(), clipH, appClass.getGameCanvasWidth(), 0);
-
-            CanvasUtil.drawClip(mBitmap, mCanvas, appClass.getTextureClipWidth(), appClass.getTextureHeight(),
-                    appClass.getTextureClipWidth(), clipH, appClass.getGameCanvasWidth(), clipH);
-
-            CanvasUtil.drawClip(mBitmap, mCanvas, appClass.getTextureClipWidth() * 2, appClass.getTextureHeight(),
-                    appClass.getTextureClipWidth(), clipH, appClass.getGameCanvasWidth(), clipH * 2);
-        } else if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_LANDSCAPE) {
-            CanvasUtil.drawClip(mBitmap, mCanvas, appClass.getTextureWidth(), 0,
-                    appClass.getTextureClipWidth(), appClass.getTextureClipHeight(), 0, appClass.getGameCanvasHeight());
-
-            CanvasUtil.drawClip(mBitmap, mCanvas, appClass.getTextureWidth(), appClass.getTextureClipHeight(),
-                    appClass.getTextureClipWidth(), appClass.getTextureClipHeight(), appClass.getTextureClipWidth(), appClass.getGameCanvasHeight());
-
-            CanvasUtil.drawClip(mBitmap, mCanvas, appClass.getTextureWidth(), appClass.getTextureClipHeight() * 2,
-                    appClass.getTextureClipWidth(), appClass.getTextureClipHeight(), appClass.getTextureClipWidth() * 2, appClass.getGameCanvasHeight());
-        }
+        Bitmap mBitmap = cOnDraw();
+        /*mCanvas.drawColor(Color.WHITE);
+        mCanvas.drawBitmap(mBitmap, 0, BG_TEXTURE_HEIGHT - mBitmap.getHeight(), null);*/
 
         // 텍스처 포인터 설정
         int[] texturenames = new int[1];
         GLES20.glGenTextures(1, texturenames, 0);
-        texturenames[0] = GLUtil.loadTexture(mTextureBitmap, texturenames, 0);
+        texturenames[0] = GLUtil.loadTexture(mBitmap, texturenames, 0);
 
-//        CanvasUtil.recycleBitmap(mBitmap);
         return texturenames;
-    }
-
-    public void SetupImage() {
-        // 30 imageobjects times 4 vertices times (u and v)
-        uvs = new float[4 * 2 * appClass.totalVertics];
-
-        float u_offset = (float) appClass.getTextureClipWidth() / (float) appClass.getTextureWidth();
-        float v_offset = (float) (appClass.getGameCanvasHeight() - appClass.getTextureHeight()) / (float) appClass.getTextureHeight();
-//        float v_offset = (float) appClass.getTextureClipHeight() / (float) appClass.getTextureHeight();
-
-        // We will make 30 randomly textures objects
-        for (int i = 0; i < appClass.totalVertics; i++) {
-
-            int val = i - 1;
-
-            // Adding the UV's using the offsets
-            /*uvs[(i * 8) + 0] = random_u_offset * 0.5f;
-            uvs[(i * 8) + 1] = random_v_offset * 0.5f;
-            uvs[(i * 8) + 2] = random_u_offset * 0.5f;
-            uvs[(i * 8) + 3] = (random_v_offset + 1) * 0.5f;
-            uvs[(i * 8) + 4] = (random_u_offset + 1) * 0.5f;
-            uvs[(i * 8) + 5] = (random_v_offset + 1) * 0.5f;
-            uvs[(i * 8) + 6] = (random_u_offset + 1) * 0.5f;
-            uvs[(i * 8) + 7] = random_v_offset * 0.5f;*/
-
-
-            if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_PORTRAIT) {
-                if (i == 0) {
-                    uvs[(i * 8) + 0] = 0f;
-                    uvs[(i * 8) + 1] = 1f;
-                    uvs[(i * 8) + 2] = 0f;
-                    uvs[(i * 8) + 3] = 0f;
-                    uvs[(i * 8) + 4] = u_offset * 3;
-                    uvs[(i * 8) + 5] = 0f;
-                    uvs[(i * 8) + 6] = u_offset * 3;
-                    uvs[(i * 8) + 7] = 1f;
-                } else {
-                    uvs[(i * 8) + 0] = u_offset * 3;
-                    uvs[(i * 8) + 1] = (val + 1) * v_offset;
-                    uvs[(i * 8) + 2] = u_offset * 3;
-                    uvs[(i * 8) + 3] = val * v_offset;
-                    uvs[(i * 8) + 4] = u_offset * 4;
-                    uvs[(i * 8) + 5] = val * v_offset;
-                    uvs[(i * 8) + 6] = u_offset * 4;
-                    uvs[(i * 8) + 7] = (val + 1) * v_offset;
-                }
-            } else if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_LANDSCAPE) {
-                v_offset = (float) appClass.getTextureClipHeight() / (float) appClass.getTextureHeight();
-                if (i == 0) {
-                    uvs[(i * 8) + 0] = 0f;
-                    uvs[(i * 8) + 1] = 0f;
-                    uvs[(i * 8) + 2] = 0f;
-                    uvs[(i * 8) + 3] = v_offset * 3;
-                    uvs[(i * 8) + 4] = 1f;
-                    uvs[(i * 8) + 5] = v_offset * 3;
-                    uvs[(i * 8) + 6] = 1f;
-                    uvs[(i * 8) + 7] = 0f;
-                } else {
-                    uvs[(i * 8) + 0] = val * u_offset;
-                    uvs[(i * 8) + 1] = v_offset * 3;
-                    uvs[(i * 8) + 2] = val * u_offset;
-                    uvs[(i * 8) + 3] = v_offset * 4;
-                    uvs[(i * 8) + 4] = (val + 1) * u_offset;
-                    uvs[(i * 8) + 5] = v_offset * 4;
-                    uvs[(i * 8) + 6] = (val + 1) * u_offset;
-                    uvs[(i * 8) + 7] = v_offset * 3;
-                }
-            }
-        }
-
-        // The texture buffer
-        ByteBuffer bb = ByteBuffer.allocateDirect(uvs.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        uvBuffer = bb.asFloatBuffer();
-        uvBuffer.put(uvs);
-        uvBuffer.position(0);
     }
 
     public void SetupTriangle() {
         // Our collection of vertices
-        vertices = new float[4 * 3 * appClass.totalVertics];
+        vertices = new float[4 * 3];
 
-        for (int i = 0; i < appClass.totalVertics; i++) {
-            int mTextureW = 0;
-            int mTextureH = 0;
-            int offset_x = 0;
-            int offset_y = 0;
+        // Create the vertex data
+        // for(int i=0;i<30;i++)
+        // {
+//		int overHeight = (mGameCanvasHeight*scaleValue) -
+        int offset_x = 0;// rnd.nextInt((int)deviceWidth);
+        int offset_y = 0;//overCanvasHeight;// rnd.nextInt((int)deviceHeight);
 
-            if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_PORTRAIT) {
-                if (i == 0) {
-                    mTextureW = appClass.getGameCanvasWidth();
-                    mTextureH = appClass.getTextureHeight();
-                    offset_x = 0;
-                    offset_y = appClass.getGameCanvasHeight() - appClass.getTextureHeight();
-                } else {
-                    mTextureW = appClass.getTextureClipWidth();
-                    mTextureH = appClass.getGameCanvasHeight() - appClass.getTextureHeight();
-                    offset_x = (i - 1) * mTextureW;
-                    offset_y = 0;
-                }
-                // Create the 2D parts of our 3D vertices, others are default 0.0f
-                vertices[(i * 12) + 0] = offset_x;
-                vertices[(i * 12) + 1] = offset_y;
-                vertices[(i * 12) + 2] = 0f;
+            // Create the 2D parts of our 3D vertices, others are default 0.0f
+//            float textureW = appClass.getTextureWidth(); //* scaleValue;
+//            float textureH = appClass.getTextureHeight(); //* scaleValue;
 
-                vertices[(i * 12) + 3] = offset_x;
-                vertices[(i * 12) + 4] = offset_y + mTextureH;
-                vertices[(i * 12) + 5] = 0f;
+        scaleValue = 1;
 
-                vertices[(i * 12) + 6] = offset_x + mTextureW;
-                vertices[(i * 12) + 7] = offset_y + mTextureH;
-                vertices[(i * 12) + 8] = 0f;
+        vertices[0] = offset_x;
+        vertices[1] = offset_y + (appClass.getTextureHeight() * scaleValue);
+        vertices[2] = 0f;
 
-                vertices[(i * 12) + 9] = offset_x + mTextureW;
-                vertices[(i * 12) + 10] = offset_y;
-                vertices[(i * 12) + 11] = 0f;
-            } else if (appClass.mGameOrientation == appClass.GAMECANVAS_ORIENTATION_LANDSCAPE) {
+        vertices[3] = offset_x;
+        vertices[4] = offset_y;
+        vertices[5] = 0f;
 
-                if (i == 0) {
-                    mTextureW = appClass.getTextureWidth();
-                    mTextureH = appClass.getGameCanvasHeight();
-                    offset_x = 0;
-                    offset_y = 0;
-                } else {
-                    mTextureW = appClass.getTextureClipWidth();
-                    mTextureH = appClass.getTextureClipHeight();
-                    offset_x = appClass.getTextureWidth();
-                    offset_y = (appClass.getTextureClipHeight() * 2) - (i - 1) * mTextureH;
-                }
-                // Create the 2D parts of our 3D vertices, others are default 0.0f
-                vertices[(i * 12) + 0] = offset_x;
-                vertices[(i * 12) + 1] = offset_y + mTextureH;
-                vertices[(i * 12) + 2] = 0f;
+        vertices[6] = offset_x + (appClass.getTextureWidth() * scaleValue);
+        vertices[7] = offset_y;
+        vertices[8] = 0f;
 
-                vertices[(i * 12) + 3] = offset_x;
-                vertices[(i * 12) + 4] = offset_y;
-                vertices[(i * 12) + 5] = 0f;
-
-                vertices[(i * 12) + 6] = offset_x + mTextureW;
-                vertices[(i * 12) + 7] = offset_y;
-                vertices[(i * 12) + 8] = 0f;
-
-                vertices[(i * 12) + 9] = offset_x + mTextureW;
-                vertices[(i * 12) + 10] = offset_y + mTextureH;
-                vertices[(i * 12) + 11] = 0f;
-            }
-        }
+        vertices[9] = offset_x + (appClass.getTextureWidth() * scaleValue);
+        vertices[10] = offset_y + (appClass.getTextureHeight() * scaleValue);
+        vertices[11] = 0f;
+        // }
 
         // The indices for all textured quads
-        indices = new short[6 * appClass.totalVertics];
+        indices = new short[6];
         int last = 0;
-        for (int i = 0; i < appClass.totalVertics; i++) {
-            // We need to set the new indices for the new quad
-            indices[(i * 6) + 0] = (short) (last + 0);
-            indices[(i * 6) + 1] = (short) (last + 1);
-            indices[(i * 6) + 2] = (short) (last + 2);
-            indices[(i * 6) + 3] = (short) (last + 0);
-            indices[(i * 6) + 4] = (short) (last + 2);
-            indices[(i * 6) + 5] = (short) (last + 3);
+        // for(int i=0;i<30;i++)
+        // {
+        // We need to set the new indices for the new quad
+        indices[0] = (short) (last + 0);
+        indices[1] = (short) (last + 1);
+        indices[2] = (short) (last + 2);
+        indices[3] = (short) (last + 0);
+        indices[4] = (short) (last + 2);
+        indices[5] = (short) (last + 3);
 
-            // Our indices are connected to the vertices so we need to keep them
-            // in the correct order.
-            // normal quad = 0,1,2,0,2,3 so the next one will be 4,5,6,4,6,7
-            last = last + 4;
-        }
+        // Our indices are connected to the vertices so we need to keep them
+        // in the correct order.
+        // normal quad = 0,1,2,0,2,3 so the next one will be 4,5,6,4,6,7
+        last = last + 4;
+        // }
 
         // The vertex buffer.
         ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -475,8 +318,8 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         appClass.setDeviceScreenHeight(height);
 
         //올바른 touch 좌표를 위한 value
-        appClass.mGameScaleValueWidth = (float) appClass.getGameCanvasWidth() / (float) width;
-        appClass.mGameScaleValueHeight = (float) appClass.getGameCanvasHeight() / (float) height;
+        appClass.mGameScaleValueWidth = appClass.getGameCanvasWidth() / width;
+        appClass.mGameScaleValueHeight = appClass.getGameCanvasHeight() / height;
 
         cOnSurfaceChanged((int) width, (int) height);
 
@@ -513,12 +356,11 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
         super.onPause();
     }
 
-//    private MotionEvent tempMotionEvent;
+    private MotionEvent tempMotionEvent;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        tempMotionEvent = event;
-        cOnTouchEvent(event);
+        tempMotionEvent = event;
         return true;
     }
 

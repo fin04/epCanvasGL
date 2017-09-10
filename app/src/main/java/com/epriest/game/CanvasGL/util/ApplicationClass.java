@@ -44,11 +44,13 @@ public class ApplicationClass  extends Application {
     private int mGameCanvasWidth;
     private int mGameCanvasHeight;
 
-    public int gameMode;
+    public int stateMode;
     public int gameState;
     public boolean isSceneInit;
     public boolean isGameInit;
     public Bitmap loadingBg;
+
+    public int mAdBannerHeight;
 
     @Override
     public void onCreate() {
