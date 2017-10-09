@@ -519,12 +519,14 @@ public abstract class GLView extends GLSurfaceView implements Renderer {
     public boolean onTouchEvent(MotionEvent event) {
 //        tempMotionEvent = event;
         cOnTouchEvent(event);
+        requestRender();
         return true;
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         cOnKeyDown(keyCode, event);
+        requestRender();
         return true;
     }
 
