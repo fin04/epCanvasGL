@@ -24,6 +24,29 @@ public class GLUtil {
         return bitmap;
 	}
 
+	static public Bitmap loadAssetsBitmap(Context context, String path, Bitmap.Config format, int scaleValue) {
+		Bitmap bitmap = null;
+		try{
+			InputStream is = context.getAssets().open(path);
+			BitmapFactory.Options opt = new BitmapFactory.Options();
+			opt.inSampleSize = scaleValue;
+			if(format == null)
+				opt.inPreferredConfig = Config.RGB_565;
+			else
+				opt.inPreferredConfig = format;
+			bitmap = BitmapFactory.decodeStream(is, null, opt);
+			if(is != null)
+				try{
+					is.close();
+				}catch(IOException e){
+					Log.d("","IOException"+e);
+				}
+		}catch(IOException e){
+			Log.d("", "IOException"+e);
+		}
+		return bitmap;
+	}
+
 	static public Bitmap loadAssetsBitmap(Context context, String path, Bitmap.Config format) {
 		Bitmap bitmap = null;
 		try{

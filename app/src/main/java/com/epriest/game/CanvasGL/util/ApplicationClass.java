@@ -51,6 +51,7 @@ public class ApplicationClass  extends Application {
     public Bitmap loadingBg;
 
     public int mAdBannerHeight;
+    public String newName = null;
 
     @Override
     public void onCreate() {
